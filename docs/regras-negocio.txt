@@ -1,0 +1,17 @@
+REGRAS DE NEGÓCIO E LIMITAÇÕES
+
+1. JANELA DE EXECUÇÃO
+   - O ETL deve rodar estritamente entre 03:00 e 05:00 AM para evitar conflito de File Lock com usuários.
+   
+2. TRATAMENTO DE ERROS DE ARQUIVO
+   - Se o arquivo estiver em uso (Lock), o sistema deve realizar 3 tentativas com intervalo de 5 minutos (Backoff).
+   - Após 3 falhas, enviar alerta crítico e abortar.
+
+3. LIMPEZA DE DADOS FINANCEIROS
+   - Valores monetários podem vir formatados como texto ("R$ 1.200,50").
+   - Regra de conversão: Remover "R$", remover ".", substituir "," por ".".
+
+4. INTEGRIDADE REFERENCIAL
+   - Vendas com IDs de Loja ou Produto que não existem nas tabelas de dimensão (Cadastro) devem ser:
+   - [ ] Rejeitadas (Opção Estrita) OU
+   - [x] Inseridas com ID nulo/flag de erro (Opção Permissiva - Escolhida para não perder faturamento).
